@@ -93,10 +93,13 @@ The script uses the following default parameters (can be modified in the code):
 | `MIN_SIGNAL_SIZE` | 5 | Minimum signal window (seconds) |
 | `MAX_SIGNAL_SIZE` | 30 | Maximum signal window (seconds) |
 | `RESCAN_FREQUENCY` | 1 Hz | Face re-detection interval |
-| `SAMPLING_FREQUENCY` | 1 Hz | Heart rate estimation frequency |
+| `SAMPLING_FREQUENCY` | 1 Hz | Heart rate estimation frequency (FFT updates) |
 | `REL_MIN_FACE_SIZE` | 0.4 | Minimum face size (fraction of frame) |
 | `MAX_CORNERS` | 10 | Maximum KLT tracking points |
 | `MIN_CORNERS` | 5 | Minimum points for valid tracking |
+
+**Note on Update Frequency:**
+The `SAMPLING_FREQUENCY` parameter controls how often the BPM is recalculated using FFT analysis (default: once per second). Between updates, the GUI displays the last valid BPM estimate. This matches the C++ implementation behavior and reduces computational overhead while providing smooth real-time feedback.
 
 ## Output
 
