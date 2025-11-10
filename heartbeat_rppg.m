@@ -75,6 +75,7 @@ function heartbeat_rppg(varargin)
     lastScanTime = 0;
     lastSamplingTime = 0;
     frameCount = 0;
+    lastBpm = NaN;       % Last valid BPM estimate
 
     % Signal buffers
     signalRGB = [];      % RGB signal time series [Nx3]
@@ -214,7 +215,7 @@ function heartbeat_rppg(varargin)
             end
 
             %% Process signal and estimate heart rate
-            bpm = NaN;
+            bpm = lastBpm;  % Use last valid BPM by default
             processedSignal = [];
             powerSpectrum = [];
             freqAxis = [];
@@ -235,14 +236,21 @@ function heartbeat_rppg(varargin)
                     processedSignal = processSignalPCA(signalRGB, rescanFlags, effectiveFps, lowIdx, highIdx);
                 end
 
-                % Estimate heart rate using FFT
-                [bpm, powerSpectrum, freqAxis] = estimateHeartRate(processedSignal, ...
-                    effectiveFps, lowIdx, highIdx, LOW_BPM, HIGH_BPM);
+                % Only estimate heart rate at sampling frequency
+                if (currentTime - lastSamplingTime) / 1000 >= 1 / SAMPLING_FREQUENCY
+                    % Estimate heart rate using FFT
+                    [newBpm, powerSpectrum, freqAxis] = estimateHeartRate(processedSignal, ...
+                        effectiveFps, lowIdx, highIdx, LOW_BPM, HIGH_BPM);
 
-                if ~isnan(bpm)
-                    bpmHistory = [bpmHistory; currentTime, bpm];
-                    fprintf('[Frame %d] BPM: %.1f (FPS: %.1f, Samples: %d)\n', ...
-                        frameCount, bpm, effectiveFps, numSamples);
+                    if ~isnan(newBpm)
+                        bpm = newBpm;
+                        lastBpm = newBpm;
+                        bpmHistory = [bpmHistory; currentTime, bpm];
+                        fprintf('[Frame %d] BPM: %.1f (FPS: %.1f, Samples: %d)\n', ...
+                            frameCount, bpm, effectiveFps, numSamples);
+                    end
+
+                    lastSamplingTime = currentTime;
                 end
             end
 
