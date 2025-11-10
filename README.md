@@ -25,6 +25,16 @@ If you are interested in the specifics, feel free to have a read of my publicati
 
 See also my minimal [JavaScript implementation](https://github.com/prouast/heartbeat-js) and [Browser Demo](https://prouast.github.io/heartbeat-js/).
 
+### MATLAB Version
+
+A complete single-file MATLAB implementation is available in this repository as `heartbeat_rppg.m`. It features:
+- Support for both webcam and video files
+- Green channel and PCA-based algorithms
+- Real-time visualization and face tracking
+- Simple one-function interface
+
+See [README_MATLAB.md](README_MATLAB.md) for detailed usage instructions.
+
 ### Demo
 
 * [Real-time rPPG in action][video1]
